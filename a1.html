@@ -11,8 +11,58 @@
   <body>
     <h1>Ha Tien's Assignment 1!</h1>
     <div class="header">
-      <img src="IMG_8296_Facetune_03-04-2020-16-49-35_Original.jpg" />
-      <p>Here is all the documentation for assignment 1!</p>
+      <img src="IMG_5095.jpg" />
+      <img src="IMG_5096.gif" />
     </div>
+    <p>Caption: Image and gif of the circuit board. The value of the resistors used was 220 mA. Using a datasheet I found on octoparts, I found the DC current and calculated the appropriate resistance to use. The DC current for each LED light was red = 30 mA, 
+      yellow = 20, green = 30. Using the equation V = I * R, I calculated mA to A, subsituted I with the LED values, and subsituted V with 3.2. V is 3.2 because you start with 5 volts and loose 1.8 volts with time. Therefore, the Resistance values I got was 106.7 
+      for red and green. I got 160 for yellow. The resistor that made the most sense to use was 220 mA.  
+    </p>
+    <div class="Schematic">
+      <h2>Schematic</h2>
+      <img src="Screenshot 2024-01-11 024648.png" alt="LED Circuit Schematic">
+      <p>Caption: My Schematic = The 3 LED lights derives its power source from 3 pins, which are 13, 12, and 11. The power is goes to the LED light without a resistor. 
+        But, a resistor limits the voltage running to one wire connected to the ground. 
+      </p>
+    </div>
+    <div class="code">
+      <h2>Firmware Code</h2>
+      <pre><code>
+        void setup() {
+          // initialize digital pin as an output.
+          pinMode(13, OUTPUT);
+          pinMode(12, OUTPUT);
+          pinMode(11, OUTPUT);
+        }
+
+        void loop() {
+          digitalWrite(13, HIGH);  // turn the LED on (HIGH is the voltage level)
+          delay(1000);                      // wait for a second
+          digitalWrite(13, LOW);   // turn the LED off by making the voltage LOW
+          delay(1000);                      // wait for a second
+          digitalWrite(12, HIGH);  // turn the LED on (HIGH is the voltage level)
+          delay(1000);                      // wait for a second
+          digitalWrite(12, LOW);   // turn the LED off by making the voltage LOW
+          delay(1000);                   // wait for a second
+          digitalWrite(11, HIGH);  // turn the LED on (HIGH is the voltage level)
+          delay(1000);                      // wait for a second
+          digitalWrite(11, LOW);   // turn the LED off by making the voltage LOW
+          delay(1000);                      // wait for a second
+        }
+      </code></pre>
+    </div>
+    <div class="additional questions">
+      <h2>Additional Questions</h2>
+      <h3> 1. </h3>
+      <img src="Screenshot 2024-01-11 032510.png" />
+      <h3> 2. </h3>
+      <p> Arduino Uno has 14 digital I/O pins, of which 6 can be used as PWM (Pulse Width Modulation) outputs. So, for an Arduino Uno, you could independently control up to 14 LEDs using the digital I/O pins.
+        As for how much current that would draw, a common current value for small LEDs is around 20 mA (0.02 A). Each I/O pin on an Arduino can typically supply a maximum of 40 mA, but it's recommended to stay well below this limit. 
+        So using this equation: Total Current= Number of LEDs × Current per LED = 14 × 20 mA =  280 mA. The total current would be 280 mA.
+      </p>
+      <h3> 4. </h3>
+      <p> The sweet spot that I found for how fast you need to blink your LEDs until you no longer can tell that they are blinking was 10 miliseconds.</p>
+    </div>
+    <p><a href="index.html">Back to Homepage</a></p>
   </body>
 </html>
