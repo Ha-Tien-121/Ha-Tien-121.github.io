@@ -11,30 +11,115 @@
   <body>
     <h1>Ha Tien's Assignment 2!</h1>
     <div class="header">
-      <img src="IMG_5095.jpg" />
-      <img src="IMG_5096.gif" />
+      <img src="IMG_5110.jpg" />
+      <img src="IMG_5106.gif" />
     </div>
-    <p>Caption:   
+    <p>Caption: The project I created allows the user to press one of the buttons to increase the brightness of the LED light or fade it to a lower brightness. 
+      Another button allows the user to change the color of the LED light with each click of the button. 
     </p>
+    <br>
+    <br>
     <div class="Schematic">
       <h2>Schematic</h2>
-      <img src="Screenshot 2024-01-11 024648.png" alt="LED Circuit Schematic">
-      <p>Caption:  
+      <img src="Scannable Document on Jan 19, 2024 at 12_57_32 AM.png" alt="LED Circuit Schematic">
+      <p>Caption: The schematic of the circuits includes one multi-colored LED light and two buttons. Three prongs of the LED are connected to pins ~10, ~9, and ~6
+        through resistors. Another prong of the LED is connected to the ground. The first push button is attached to a power source of 5V and pin 2. The second button is attached
+        to a power source of 3.3V and pin ~3. Both buttons are connected to the ground through a resistor. 
       </p>
+      <br>
+      <br>
     </div>
     <div class="code">
       <h2>Firmware Code</h2>
       <pre><code>
-        code here
+        const int buttonPin1 = 2;  // the number of the pushbutton pin
+        const int buttonPin2 = 3;  // the number of the pushbutton pin
+        int brightness = 0;  // how bright the LED is
+        int fadeAmount = 10;  // how many points to fade the LED by
+        int colorSetting = 0;
+
+        int buttonState1 = 0;  // variable for reading the pushbutton status
+        int buttonState2 = 0;  // variable for reading the pushbutton status
+
+
+        void setup() {
+          // initialize the LED pin as an output:
+          pinMode(10, OUTPUT);
+          pinMode(9, OUTPUT);
+          pinMode(6, OUTPUT);
+          // initialize the pushbutton pin as an input:
+          pinMode(buttonPin1, INPUT);
+          pinMode(buttonPin2, INPUT);
+
+        }
+
+        void loop() {
+          // read the state of the pushbutton value:
+          buttonState1 = digitalRead(buttonPin1);
+          buttonState2 = digitalRead(buttonPin2);
+
+
+          // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
+          if (buttonState1 == HIGH) {
+            // turn LED on:
+            // digitalWrite(ledPin, HIGH);
+            // reset the brightness at the ends of the fade:
+            if (brightness >= 200) {
+              brightness = 0;
+            } else {
+              brightness = brightness + fadeAmount;
+            }
+            // change the brightness for next time through the loop:
+            analogWrite(10, brightness);
+            analogWrite(9, brightness);
+            analogWrite(6, brightness);
+          } 
+
+          if (buttonState2 == HIGH) { // with each click, update color setting
+            if (colorSetting == 4) {
+              colorSetting = 0; // reset if color setting is at the highest number
+            } else {
+              colorSetting += 1; // update color setting
+            }
+
+            if (colorSetting == 0) {
+              digitalWrite(10, LOW);  // turn the LED off (LOW is the voltage level)
+              digitalWrite(6, LOW); // turn the LED off (LOW is the voltage level)
+              digitalWrite(9, HIGH); // turn the LED on (HIGH is the voltage level)
+            } else if (colorSetting == 1) {
+              digitalWrite(10, HIGH);  // turn the LED on (HIGH is the voltage level)
+              digitalWrite(6, LOW); // turn the LED off (LOW is the voltage level)
+              digitalWrite(9, LOW); // turn the LED off (LOW is the voltage level)
+            } else if (colorSetting == 2) {
+              digitalWrite(10, LOW);  // turn the LED off (LOW is the voltage level)
+              digitalWrite(6, HIGH); // turn the LED on (HIGH is the voltage level)
+              digitalWrite(9, LOW); // turn the LED off (LOW is the voltage level)
+            } else if (colorSetting ==3) {
+              digitalWrite(10, HIGH);  // turn the LED on (HIGH is the voltage level)
+              digitalWrite(6, HIGH); // turn the LED on (HIGH is the voltage level)
+              digitalWrite(9, LOW); // turn the LED off (LOW is the voltage level)
+            } else if (colorSetting == 4) {
+              digitalWrite(10, HIGH);  // turn the LED on (HIGH is the voltage level)
+              digitalWrite(6, LOW);  // turn the LED off (LOW is the voltage level)
+              digitalWrite(9, HIGH); // turn the LED on (HIGH is the voltage level)
+            }
+
+          }
+
+          // wait for 30 milliseconds to see the dimming effect
+          delay(30);
+
+        }
       </code></pre>
+      <br>
+      <br>
     </div>
     <div class="additional questions">
       <h2>Additional Questions</h2>
       <h3> 1. </h3>
-      <img src="Screenshot 2024-01-11 032510.png" />
+      <img src="Scannable Document on Jan 19, 2024 at 12_57_32 AM.png" />
       <h3> 2. </h3>
-      <p> Answer here
-      </p>
+      <img src="Scannable Document 3 on Jan 19, 2024 at 12_57_32 AM.png" />
     </div>
     <p><a href="index.html">Back to Homepage</a></p>
   </body>
