@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+
+    <title>Ha Tien's HCDE 439 Physical Computing Page!</title>
+
+    <link href="style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <h1>Ha Tien's Assignment 4!</h1>
+    <div class="header">
+      <img src="IMG_5165.gif" />
+      <img src="IMG_5167.jpg" />
+    </div>
+    <p>Caption: This code reads temperature and humidity data from the DHT11 sensor and prints the values to the serial port. If the temperature value is above a 
+       specified value, it will cause the servo motor to spin like a fan. This code will also light up a red LED light when you touch the capacitive sensor.
+    </p>
+    <br>
+    <br>
+    <div class="Schematic">
+      <h2>Schematic</h2>
+      <img src="IMG_5169.jpg" alt="LED Circuit Schematic">
+      <p>Caption: Red LED pin attached from pin 9 to ground through a 220 ohm resistor. Capacitive sensor is a 1 M resistor attached to pin 4 and 2. 
+        Temperature and Humitdity reader is attached to pin 10, 5V and ground. Servo motor is attached to pin 13, 5v, and ground
+      </p>
+      <br>
+      <br>
+    </div>
+    <div class="code">
+      <h2>Firmware Code</h2>
+      <pre><code>
+        // Include the DHT11, Servo, and CapacitiveSensor library for interfacing with the sensor.
+        #include <DHT11.h>
+        #include <Servo.h>
+        #include <CapacitiveSensor.h>
+        
+        /*
+         * DHT11 Sensor Reader for Arduino:
+         * Author: Dhruba Saha
+         * Version: 2.0.0
+         * License: MIT
+         *
+         * CapitiveSense Library Demo Sketch: 
+         * Paul Badger 2008
+         * 
+         * Modified based on DHT11 example and Capitive Sense example by Ha Tien on Feb 2nd 2024
+         *
+         * Function: 
+         * This code reads temperature and humidity data from the DHT11 sensor and prints the values to the serial port. If the temperature value is above a 
+         * specified value, it will cause the servo motor to spin like a fan. This code will also light up a red LED light when you touch the capacitive sensor.
+         *
+         * The Circuit:
+         * - Red LED pin attached from pin 9 to ground through a 220 ohm resistor
+         * - Capacitive sensor is a 1 M resistor attached to pin 4 and 2
+         * - Temperature and Humitdity reader is attached to pin 10, 5V and ground. 
+         * - Servo motor is attached to pin 13, 5v, and ground
+         */
+        
+        // These constants won't change:
+        const int LedPin = 9;
+        const int servoPin = 13;
+        
+        // Create an instance of the DHT11 class.
+        DHT11 dht11(10);
+        
+        // Create an instance of the Capacitive Sensor class
+        CapacitiveSensor   cs_4_2 = CapacitiveSensor(4,2);        
+        
+        // Create servo object to control a servo
+        Servo myservo; 
+        
+        void setup()                    
+        {
+           // initialize digital pin as an output.
+           pinMode(9, OUTPUT);
+           // attaches the servo on pin 13 to the servo object
+           myservo.attach(servoPin);
+           // turn off autocalibrate on channel 1 - just as an example
+           cs_4_2.set_CS_AutocaL_Millis(0xFFFFFFFF);     
+           // Initialize serial communication to allow debugging and data readout.
+           // Using a baud rate of 9600 bps.
+           Serial.begin(9600);
+        }
+        
+        void loop()                    
+        {
+            // capacitive sensor output
+            long total1 =  cs_4_2.capacitiveSensor(30);
+        
+            // Uncomment for debugging
+            // Serial.print(millis() - start);        // check on performance in milliseconds
+            // Serial.print("\t");                    // tab character for debug windown spacing
+            // Serial.println(total1);                  // print sensor output 1
+        
+            // if the capacitive sensor is touched, it is usually above 500
+            if (total1 > 500) {
+              digitalWrite(LedPin, HIGH); // turn LED light on when touched
+            } else {
+              digitalWrite(LedPin, LOW); // turn LED light off when not touched
+            }
+        
+            // Attempt to read the temperature and humidity values from the DHT11 sensor.
+            int temperature = dht11.readTemperature();
+            int humidity = dht11.readHumidity();
+        
+            // Check the results of the readings.
+            // If there are no errors, print the temperature and humidity values.
+            // If there are errors, print the appropriate error messages.
+            if (temperature != DHT11::ERROR_CHECKSUM && temperature != DHT11::ERROR_TIMEOUT &&
+                humidity != DHT11::ERROR_CHECKSUM && humidity != DHT11::ERROR_TIMEOUT)
+            {
+                Serial.print("Temperature: ");
+                Serial.print(temperature);
+                Serial.println(" °C");
+        
+                Serial.print("Humidity: ");
+                Serial.print(humidity);
+                Serial.println(" %");
+            }
+            else
+            {
+                if (temperature == DHT11::ERROR_TIMEOUT || temperature == DHT11::ERROR_CHECKSUM)
+                {
+                    Serial.print("Temperature Reading Error: ");
+                    Serial.println(DHT11::getErrorString(temperature));
+                }
+                if (humidity == DHT11::ERROR_TIMEOUT || humidity == DHT11::ERROR_CHECKSUM)
+                {
+                    Serial.print("Humidity Reading Error: ");
+                    Serial.println(DHT11::getErrorString(humidity));
+                }
+            }
+        
+            // If the temperature is above a specified value (aka if it is too hot), the servo motor will spin like a fan
+            // Can set 0 to be any temperature. I set it to be 0 for better demonstration purposes. 
+            if (temperature > 0) {
+              myservo.write(180);
+              delay(100); // arbitrary delay to allow the motor to complete rotation. 
+              myservo.write(0);
+            }
+        
+            delay(10);                             // arbitrary delay to limit data to serial port 
+        }
+      </code></pre>
+      <br>
+      <br>
+    </div>
+    <div class="additional questions">
+      <h2>Additional Questions</h2>
+      <h3> 1. </h3>
+      <img src="IMG_5170.jpg" />
+      <h3> 2. </h3>
+      <p>To address the issue of an input device giving erroneous readings 1% of the time, we can average a set number of past readings to get the current value. 
+        This can help minimize the impact of sporadic erroneous readings.
+      </p>
+      <pre>
+        <code>
+          sum = 0
+          for i = 0 to N-1 {
+              sum += readings[i]
+          }
+          averageReading = sum / N
+        </code>
+      </pre>
+      <h3> 3. </h3>
+      <p>
+        To address the issue of a noisy input device where the measurement randomly deviates up or down by 10%, we can check sudden, unrealistic changes in the sensor value. 
+        If a new reading jumps significantly from the previous value (beyond a reasonable amount), you can throw it away and use the previous value instead.
+      </p>
+      <pre>
+        <code>
+          // if it’s 2.5 times higher something must be wrong!
+          if (sensorValue > 2.5*prevSensorValue) {
+            // If the new reading is significantly higher or lower, throw it away
+            // and set it to the previous value
+            sensorValue = prevSensorValue;
+          }  else {
+            // Update prevSensorValue with the current sensorValue if it's within the expected range
+            prevSensorValue = sensorValue
+        }
+        </code>
+      </pre>
+    </div>
+    <p><a href="index.html">Back to Homepage</a></p>
+  </body>
+</html>
