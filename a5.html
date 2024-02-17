@@ -45,6 +45,7 @@
         }
         
         void loop() {
+            // I used this resource for this section: https://forum.arduino.cc/t/hc-sr04-new-ping-h/285316 
             delay(50);                  // Wait 50ms between pings. 
             unsigned int uS = sonar.ping(); // Send ping, get ping time in microseconds (uS).
             unsigned int distance = uS / US_ROUNDTRIP_CM; // Calculate distance in cm
@@ -72,6 +73,7 @@
       <p> The absolute maximum amount of current between pins 2 and 3 would be 32 A if continuous drain current and 128 A if pulsed drain current. </p>
       <h3> 2. </h3>
       <img src="WIN_20240216_15_56_29_Pro.jpg" alt="Question 2">
+      <img src="Screenshot 2024-02-16 161607.png" alt="Question 2">
       <h3> 3. </h3>
       <img src="WIN_20240216_15_56_40_Pro.jpg" alt="Question 3">
       <pre>
