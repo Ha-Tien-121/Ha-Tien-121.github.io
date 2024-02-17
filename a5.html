@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+
+    <title>Ha Tien's HCDE 439 Physical Computing Page!</title>
+
+    <link href="style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <h1>Ha Tien's Assignment 5!</h1>
+    <div class="header">
+      <img src="WIN_20240216_15_45_45_Pro.jpg" />
+      <img src="WIN_20240216_15_48_44_Pro.gif" />
+    </div>
+    <p>Caption: My project uses an ultrasonic sensor to sense when a person is close and it will light up LED lights based on the presence/distance of a person. 
+    </p>
+    <br>
+    <br>
+    <div class="Schematic">
+      <h2>Schematic</h2>
+      <img src="WIN_20240216_15_56_17_Pro.jpg" alt="LED Circuit Schematic">
+      <p>Caption: The trigger pin on the ultrasonic sensor is tied to the arduino pin 12. The echo pin on the ultrasonic sensor is tied to the pin 11. The transistor is attached to the pin 9. 
+        This project uses a transistor, ultrasonic sensor, and led strip. 
+      </p>
+      <br>
+      <br>
+    </div>
+    <div class="code">
+      <h2>Firmware Code</h2>
+      <pre><code>
+        #include <NewPing.h>
+
+        #define TRIGGER_PIN  12  // Arduino pin tied to trigger pin on the ultrasonic sensor.
+        #define ECHO_PIN     11  // Arduino pin tied to echo pin on the ultrasonic sensor.
+        #define MAX_DISTANCE 200 // Maximum distance we want to ping for (in centimeters). 
+        #define LED_PIN 9         // LED pin
+        
+        NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
+        
+        void setup() {
+            pinMode(LED_PIN, OUTPUT); // Set LED as output
+            Serial.begin(9600);       // Open serial monitor at 9600 baud to see ping results.
+        }
+        
+        void loop() {
+            delay(50);                  // Wait 50ms between pings. 
+            unsigned int uS = sonar.ping(); // Send ping, get ping time in microseconds (uS).
+            unsigned int distance = uS / US_ROUNDTRIP_CM; // Calculate distance in cm
+            Serial.print("Ping: ");
+            Serial.print(distance); // Convert to distance
+            Serial.println("cm");
+        
+            // Light up LED based on distance
+            if (distance < 50) {
+            // As the object gets closer, increase the brightness
+            int brightness = map(distance, 0, 50, 255, 0); // Map the distance to a brightness value
+            analogWrite(LED_PIN, brightness);
+            } else {
+            // If the object is further than 50cm, turn off the LED
+            digitalWrite(LED_PIN, LOW);
+            }
+        }
+      </code></pre>
+      <br>
+      <br>
+    </div>
+    <div class="additional questions">
+      <h2>Additional Questions</h2>
+      <h3> 1. </h3>
+      <p> The absolute maximum amount of current between pins 2 and 3 would be 32 A if continuous drain current and 128 A if pulsed drain current. </p>
+      <h3> 2. </h3>
+      <img src="WIN_20240216_15_56_29_Pro.jpg" alt="Question 2">
+      <h3> 3. </h3>
+      <img src="WIN_20240216_15_56_40_Pro.jpg" alt="Question 3">
+      <pre>
+        <code>
+            Define control pins:
+            - Left Motor Forward Pin = 8
+            - Left Motor Backward Pin = 9
+            - Right Motor Forward Pin = 10
+            - Right Motor Backward Pin = 11
+            
+            Setup:
+            - Set all motor control pins as OUTPUT
+            
+            Loop:
+              // Move forward
+              Turn Left Motor Forward ON
+              Turn Left Motor Backward OFF
+              Turn Right Motor Forward ON
+              Turn Right Motor Backward OFF
+              Wait for 5 seconds
+            
+              // Move backward
+              Turn Left Motor Forward OFF
+              Turn Left Motor Backward ON
+              Turn Right Motor Forward OFF
+              Turn Right Motor Backward ON
+              Wait for 5 seconds
+            
+              // Left motor forward, right motor backward
+              Turn Left Motor Forward ON
+              Turn Left Motor Backward OFF
+              Turn Right Motor Forward OFF
+              Turn Right Motor Backward ON
+              Wait for 5 seconds
+            
+              // Left motor backward, then forward
+              Turn Left Motor Forward OFF
+              Turn Left Motor Backward ON
+              Wait for 5 seconds
+              Turn Left Motor Forward ON
+              Turn Left Motor Backward OFF
+              Wait for 5 seconds
+        </code>
+      </pre>
+    </div>
+    <p><a href="index.html">Back to Homepage</a></p>
+  </body>
+</html>
