@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+
+    <title>Ha Tien's HCDE 439 Physical Computing Page!</title>
+
+    <link href="style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <h1>Ha Tien's Assignment 5!</h1>
+    <div class="header">
+        <video width="100%" height="500" controls autoplay muted>
+            <source src="./a6/IMG_5337.mp4" type="video/mp4">
+        </video>
+    </div>
+    <div class="header">
+      <img src="./a6/IMG_5333.jpg" width="400" height="500"/>
+      <img src="./a6/IMG_5335.jpg" width="400" height="500"/>
+    </div>
+    <p>Caption: In this project, I made an interactive painting game where someone can control where the ink goes using a joystick and can change the color of ink using the button on the joystick.
+        You can alternate between the colors red, green, and blue. When you alternate between the colors, an LED will light up with the corresponding color. There is also a button that will clear the
+        board and you can start anew. 
+    </p>
+    <br>
+    <br>
+    <div class="Schematic">
+      <h2>Schematic</h2>
+      <img src="./a6/Scannable Document on Feb 23, 2024 at 3_41_14 PM.png" alt="LED Circuit Schematic" width="auto" height="600">
+      <p>Caption: The joystick's VRX is connected to A1, VRY is connected to A0, and switch button is connected to pin 4. The Joystick is not connected to any resistors.
+         The restart button is attached to pin 2 and a 10K ohms resistor as recommend by the arduino docs. For the RGB LED, the Red LED is connected to 
+         pin 9 (with 220 ohms resistor), green to 10 (with 220 ohms resistor), and blue to 11 (with 100 ohms resistor).  
+      </p>
+      <br>
+      <br>
+    </div>
+    <div class="code">
+      <h2>Firmware Code</h2>
+      <p> It will sometimes throw an error when first connecting to arduino. This is because the baud rate causes the Serial string to be misinterpeted. When this happens, you just need to reload until it works. </p>
+      <h3>Arduino Code</h3>
+      <pre><code>
+        #include <Arduino.h>
+
+        // Define pins for joystick
+        // Joystick X-axis
+        const int joyX = A0; 
+        // Joystick Y-axis
+        const int joyY = A1; 
+        // Joystick button
+        const int joyB = 4;
+        
+        // Define pins for RGB LED
+        // Red LED pin
+        const int ledR = 9;
+        // Green LED pin  
+        const int ledG = 10; 
+        // Blue LED pin
+        const int ledB = 11; 
+        
+        // Define button pin for restarting the game
+        const int restartButton = 2;
+        
+        // Define variable for color
+        // 0 = red, 1 = green, 2 = blue
+        int color = 0;
+        
+        void setup() {
+            // Initialize joystick pins to input
+            pinMode(joyX, INPUT);
+            pinMode(joyY, INPUT);
+        
+            // Initialize RGB LED pins to output
+            pinMode(ledR, OUTPUT);
+            pinMode(ledG, OUTPUT);
+            pinMode(ledB, OUTPUT);
+        
+            // Initialize button pins to input
+            pinMode(restartButton, INPUT_PULLUP);
+            pinMode(joyB, INPUT_PULLUP);
+        
+            // Start serial communication
+            Serial.begin(9600);
+        }
+        
+        void loop() {
+            // Read joystick values
+            int xValue = analogRead(joyX);
+            int yValue = analogRead(joyY);
+        
+            // Check if the restart button is pressed
+            if (digitalRead(restartButton) == HIGH) {
+            // Send restart command to p5.js
+            Serial.print("restart");
+            // Brief delay to prevent bouncing/multiple reads
+            delay(200);
+            } else {
+            // if button is not pressed, send NA
+            Serial.print("NA");
+            }
+        
+            // Send joystick X value to p5.js via serial
+            Serial.print(",");
+            Serial.print(xValue);
+            Serial.print(",");
+            // Send joystick Y value to p5.js via serial
+            Serial.print(yValue);
+            Serial.print(",");
+        
+            // Check if the joystick button is pressed
+            if (digitalRead(joyB) == LOW) {
+            // Cycle through colors
+            if (color ==2) {
+                // Reset color to 0 if it was 2.
+                color = 0;
+            } else {
+                // Increment color to cycle through red, green, blue.
+                color += 1;
+            }
+            // Delay to prevent bouncing/multiple reads.
+            delay(200);
+            } 
+        
+            // Reset all the LED lights
+            // Turn off the red LED
+            digitalWrite(ledR, LOW);
+            // Turn off the green LED
+            digitalWrite(ledG, LOW);
+            // Turn off the blue LED
+            digitalWrite(ledB, LOW);
+        
+            // Change the LED color based on the current value of the color variable.
+            if (color == 0) {
+            // Send color value to p5.js via serial
+            Serial.println("red");
+            //Make LED red
+            digitalWrite(ledR, HIGH);
+            } else if (color == 1) {
+            // Send color value to p5.js via serial
+            Serial.println("green");
+            // Make LED green
+            digitalWrite(ledG, HIGH);
+            } else if (color == 2) {
+            // Send color value to p5.js via serial
+            Serial.println("blue");
+            // Make LED blue
+            digitalWrite(ledB, HIGH);
+            }
+        
+            // Short delay to stabilize readings
+            delay(100); 
+        }
+      </code></pre>
+      <br>
+      <br>
+
+      <h3>p5.js </h3>
+      <pre><code>
+        // Declare a variable for the serial port object
+        let port; 
+        // Declare a variable for the connect button
+        let connectBtn;
+        // This should match the baud rate in your Arduino sketch
+        const BAUD_RATE = 9600; 
+        // Declare player position variables
+        let player_x, player_y; 
+
+        function setup() {
+            // Initialize serial communication
+            setupSerial(); 
+            // Create a canvas that is the size of the browser window
+            createCanvas(windowWidth, windowHeight); 
+            // No stroke on the drawings
+            noStroke();
+            // Initialize player's x-coordinate to the middle of the window
+            player_x = windowWidth / 2; 
+            // Initialize the player's y-coordinate to the middle of the window
+            player_y = windowHeight / 2; 
+        }
+
+        function draw() {
+            // Check whether the port is open
+            const portIsOpen = checkPort();
+            // If the port is not open, exit the draw function
+            if (!portIsOpen) return; 
+            // Read from the port until the newline
+            let str = port.readUntil("\n");
+            // If we didn't read anything, return. 
+            if (str.length == 0) return; 
+            // Trim whitespace and split on commas
+            let arr = str.trim().split(","); 
+            if (arr[0] == "restart") {
+                // Handle the restart command
+                background("gray"); // Optionally, reset the background or other elements
+                // Add any additional logic needed for restarting the game
+                // Log restart for debugging
+                console.log("Game restarted"); 
+                // Resets the player's x-coordinate to the middle of the window.
+                player_x = windowWidth /2;
+                // Resets the player's y-coordinate to the middle of the window. 
+                player_y = windowHeight/2; 
+
+            } else {
+                // If not a restart command, proceed with normal data handling
+                // for debugging purposes
+                console.log(arr[1]);
+                console.log(arr[2]);
+                console.log(arr[3]);
+                // Calls handleJoystickData function with the second, third, and fourth elements of arr as arguments.
+                handleJoystickData(arr[1], arr[2], arr[3]); 
+            }
+        }
+
+        function handleJoystickData(X,Y,color) {
+            //checks if the first value in the array is > 1000
+            if(X > 1000){
+                // If the X coordinate is greater than 1000, move left
+                player_x -= 3;
+                //for debugging
+                console.log("left");
+            } else if (X < 50){
+                // If the X coordinate is less than 50, move right
+                player_x += 3;
+                // for debugging
+                console.log("right");
+            }
+
+            if(Y > 1000){
+                // If the Y coordinate is greater than 1000, move up
+                player_y += 3;
+                console.log("up");
+            } else if (Y < 50){
+                // If the Y coordinate is less than 50, move down
+                player_y -= 3;
+                // for debugging
+                console.log("down");
+            }
+            // for debugging
+            console.log(color);
+            // Set the fill color for drawing operations to the specified color
+            fill(color);
+            circle(player_x, player_y, 30); // Draw a circle using our readings
+        }
+
+        function setupSerial() {
+            //Creates a Serial
+            port = createSerial();
+
+            // Check to see if there are any ports we have used previously
+            let usedPorts = usedSerialPorts();
+            if (usedPorts.length > 0) {
+                // If there are ports we've used, open the first one
+                port.open(usedPorts[0], BAUD_RATE);
+            }
+
+            // create a connect button
+            connectBtn = createButton("Connect to Arduino");
+            connectBtn.position(5, 5); // Position the button in the top left of the screen.
+            connectBtn.mouseClicked(onConnectButtonClicked); // When the button is clicked, run the onConnectButtonClicked function
+        }
+
+        function checkPort() {
+            if (!port.opened()) {
+                // If the port is not open, change button text
+                connectBtn.html("Connect to Arduino");
+                // Set background to gray
+                background("gray");
+                return false;
+            } else {
+                // Otherwise we are connected
+                connectBtn.html("Disconnect");
+
+                return true;
+            }
+        }
+
+        function onConnectButtonClicked() {
+            // When the connect button is clicked
+            if (!port.opened()) {
+                // If the port is not opened, we open it
+                port.open(BAUD_RATE);
+            } else {
+                // Otherwise, we close it!
+                port.close();
+            }
+        }
+      </code></pre>
+      <br>
+      <br>
+    </div>
+
+    <p><a href="index.html">Back to Homepage</a></p>
+  </body>
+</html>
