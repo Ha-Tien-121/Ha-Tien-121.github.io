@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+
+    <title>Ha Tien's HCDE 439 Physical Computing Page!</title>
+
+    <link href="style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <h1>Ha Tien's Final Project!</h1>
+    <div class="video">
+        <img src="" width="auto" height="700"/>
+    </div>
+    <div class="header">
+      <img src="" width="400" height="500"/>
+      <img src="" width="400" height="500"/>
+    </div>
+    <p>Caption: For my final project, I have turned a boring plant stand into an smart plant care system (aka the LeafMeAlone). The LeafMeAlone is equipped with LED plant grow lights that is controllable
+        by an Infared Remote, which will control the brightness of the lights. The LeafMeAlone will also have a temperature sensor that will tell the temperature and determine if it is the ideal temperature 
+        for plants. A matrix LED display will indicate to the me the health status of the plant with a smiley face indicating good health, neutral face indicating normal health, and sad face indicating 
+        bad health. The iPlant will also have a soil moisture sensor that you will put into the dirt of a plant that will determine if the plant needs water. If it senses that the plant is too dry, it will 
+        automatically send a signal to start pumping water into the pot until the sensor has sensed that the plant is sufficiently watered. 
+    </p>
+    <br>
+    <br>
+    <div class="Schematic">
+    
+      <h2>Schematic</h2>
+      <img src="./a6/Scannable Document on Feb 23, 2024 at 3_41_14 PM.png" alt="LED Circuit Schematic" width="auto" height="600">
+      <p>Caption: Since the LED strip and the water pump draw larger currents than the 40mA the Arduino output pins can supply, they are powered by a 12V power supply plug. Both LED strip lights and water pump 
+        uses transistors to control these components. One transistor controls when the water pump turns on and off from the signals of ardruino pin 9. Another transistor controls when the LED strip turns on or off
+        as well as how bright it is from the signals of arduino pin 6. A diode is additionally connected in parallel to the water pump to propect the circuit components from any damage that might occur when the motor continues spinning after it stops 
+        stops recieving current and the voltage reverses its direction. Another component of the circuitry is the LED matrix which is connected to the arduino Uno's 5V power, ground and pin 11 for DIN, pin 10 for CS, and pin 13 for CLK. The IR reciever for 
+        the remote control is attached 5V power, pin 3, and ground. The DHT11 temperature and humidity sensor is attached to 5V power, pin 12, and ground. The soil mositure sensor is attached to 5V power, pin A0, and ground. 
+      </p>
+      <br>
+      <br>
+      <h3>Bill of Materials: </h3>
+        <ul>
+            <li>1 LEDs strip light (plant growing lights)</li>
+            <li>2 Transistors </li>
+            <li>1 IR Reciever (for remote control)</li>
+            <li>1 Remote control (for controlling LED strip) </li>
+            <li>1 DHT11 Temp + Humidity sensor (for temp sensing) </li>
+            <li>1 Submersible Water pump (to pump water to plants)</li>
+            <li>1 plastic tube (to get water from pump to plant)</li>
+            <li>1 Diode Rectifier (protect from reverse voltage going into other circuit components) </li>
+            <li>1 Soil Moisture Sensor (to sensor soil moisture) </li>
+            <li>1 MAX7219 LED Matrix </li>
+            <li>1 Power Supply plug </li>
+            <li>1 Arduino Uno </li>
+            <li>1 Plant stand (to upgrade) </li>
+            <li>Aligator clips </li>     
+            <li>Wires </li>      
+        </ul>
+    </div>
+    <div class="code">
+      <h2>Firmware Code</h2>
+      <h3>Arduino Code</h3>
+      <pre><code>
+        
+      </code></pre>
+      <br>
+      <br>
+
+    </div>
+    <p><a href="index.html">Back to Homepage</a></p>
+  </body>
+</html>
